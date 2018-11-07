@@ -1,15 +1,15 @@
 package arolla.aa;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -48,8 +48,7 @@ public class ScrabbleTest {
 
     @Test
     public void histogram() {
-        Map<Integer, Integer> histogram = scrabble.histogram(playedWords);
-        assertThat(histogram)
+        assertThat(scrabble.histogram(playedWords))
                 .hasSize(29)
                 .contains(
                         entry(33, 1),
@@ -58,5 +57,20 @@ public class ScrabbleTest {
                         entry(8, 1459),
                         entry(2, 26)
                 );
+    }
+
+    @Test
+    public void best_three_scores() {
+        Map<Integer, Collection<String>> bestThreeScores = scrabble.bestThreeScores(playedWords);
+        assertThat(bestThreeScores)
+                .containsOnly(
+                        entry(33, singleton("whizzing")),
+                        entry(29, singleton("buzzards")),
+                        entry(28, set("mazzard", "dazzling", "grizzled", "puzzled", "unmuzzle", "drizzled", "muzzled", "buzzard", "buzzing"))
+                );
+    }
+
+    private Set<String> set(String... values) {
+        return new HashSet<>(asList(values));
     }
 }

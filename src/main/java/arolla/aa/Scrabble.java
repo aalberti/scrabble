@@ -1,10 +1,6 @@
 package arolla.aa;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
@@ -70,5 +66,25 @@ class Scrabble {
                         w -> 1,
                         (count1, count2) -> count1 + count2
                 ));
+    }
+
+    Map<Integer, Collection<String>> bestThreeScores(Set<String> words) {
+        return words.stream()
+                .filter(dictionary::contains)
+                .collect(toMap(
+                        Scrabble::score,
+                        Collections::singleton,
+                        this::concatenate
+                )).entrySet().stream()
+                .sorted((e1, e2) -> e2.getKey() - e1.getKey())
+                .limit(3)
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private Collection<String> concatenate(Collection<String> a, Collection<String> b) {
+        return new HashSet<String>() {{
+            addAll(a);
+            addAll(b);
+        }};
     }
 }
