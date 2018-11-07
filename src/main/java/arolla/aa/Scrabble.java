@@ -1,7 +1,9 @@
 package arolla.aa;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toMap;
 
 class Scrabble {
     private static final Map<Character, Integer> pointsPerLetter = new HashMap<Character, Integer>() {{
@@ -33,9 +35,27 @@ class Scrabble {
         put('z', 10);
     }};
 
+    private List<String> dictionary;
+
+    Scrabble(List<String> dictionary) {
+        this.dictionary = dictionary;
+    }
+
     static int score(String word) {
-        return word.chars().mapToObj(c -> (char) c)
+        return word
+                .toLowerCase()
+                .chars().mapToObj(c -> (char) c)
                 .map(pointsPerLetter::get)
                 .mapToInt(Integer::intValue).sum();
+    }
+
+    String bestValidWord(List<String> playedWords) {
+        return playedWords.stream()
+                .filter(dictionary::contains)
+                .map(word -> new AbstractMap.SimpleImmutableEntry<>(score(word), word))
+                .max(comparing(AbstractMap.SimpleImmutableEntry::getKey))
+                .map(AbstractMap.SimpleImmutableEntry::getValue)
+                .get();
+
     }
 }
