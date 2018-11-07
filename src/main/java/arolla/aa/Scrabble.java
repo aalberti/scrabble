@@ -46,7 +46,29 @@ class Scrabble {
                 .toLowerCase()
                 .chars().mapToObj(c -> (char) c)
                 .map(pointsPerLetter::get)
-                .mapToInt(Integer::intValue).sum();
+                .mapToInt(Integer::intValue)
+                .sum();
+    }
+
+    static int score(String word, Map<Character, Integer> availableLetters) {
+        return score(word, availableLetters, 0);
+    }
+
+    private static int score(String word, Map<Character, Integer> availableLetters, int acc) {
+        if (word.isEmpty())
+            return acc;
+        else {
+            String canonicalizedWord = word.toLowerCase();
+            char first = canonicalizedWord.charAt(0);
+            Integer firstScore = availableLetters.get(first) > 0 ? pointsPerLetter.get(first) : 0;
+            return score(word.substring(1), minusLetter(availableLetters, first), acc + firstScore);
+        }
+    }
+
+    private static HashMap<Character, Integer> minusLetter(Map<Character, Integer> availableLetters, char first) {
+        HashMap<Character, Integer> remainingLetters = new HashMap<>(availableLetters);
+        remainingLetters.put(first, availableLetters.get(first) - 1);
+        return remainingLetters;
     }
 
     String highestScore(Set<String> words) {

@@ -1,14 +1,14 @@
 package arolla.aa;
 
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
@@ -16,9 +16,38 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+@RunWith(JUnitParamsRunner.class)
 public class ScrabbleTest {
     private static Scrabble scrabble;
     private static Set<String> playedWords;
+    private static final Map<Character, Integer> AVAILABLE_LETTERS = new HashMap<Character, Integer>() {{
+        put('d', 1);
+        put('j', 1);
+        put('k', 1);
+        put('q', 1);
+        put('x', 1);
+        put('z', 1);
+        put('b', 2);
+        put('c', 2);
+        put('f', 2);
+        put('h', 2);
+        put('m', 2);
+        put('p', 2);
+        put('v', 2);
+        put('w', 2);
+        put('y', 2);
+        put('g', 3);
+        put('l', 4);
+        put('s', 4);
+        put('u', 4);
+        put('n', 6);
+        put('r', 6);
+        put('t', 6);
+        put('o', 8);
+        put('e', 12);
+        put('a', Integer.MAX_VALUE);
+        put('i', Integer.MAX_VALUE);
+    }};
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -74,5 +103,17 @@ public class ScrabbleTest {
 
     private Set<String> set(String... values) {
         return new HashSet<>(asList(values));
+    }
+
+    @Test
+    @Parameters({
+            "whizzing, 23",
+            "quickly, 25",
+            "squeezes, 26",
+            "buzzards, 19",
+            "delated, 7"
+    })
+    public void score_with_available_letters(String word, int score) {
+        assertThat(Scrabble.score(word, AVAILABLE_LETTERS)).isEqualTo(score);
     }
 }
