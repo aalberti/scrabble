@@ -1,16 +1,26 @@
 package arolla.aa;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScrabbleTest {
+
+    private static Scrabble scrabble;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        Set<String> dictionary = Files.lines(Paths.get("dictionary.txt")).collect(toSet());
+        scrabble = new Scrabble(dictionary);
+    }
+
     @Test
     public void empty_string_scores_0() {
         assertThat(Scrabble.score("")).isEqualTo(0);
@@ -28,9 +38,7 @@ public class ScrabbleTest {
 
     @Test
     public void best_played_word_is_whizzing() throws IOException {
-        List<String> dictionary = Files.lines(Paths.get("dictionary.txt")).collect(toList());
-        Scrabble scrabble = new Scrabble(dictionary);
-        List<String> playedWords = Files.lines(Paths.get("playedwords.txt")).collect(toList());
+        Set<String> playedWords = Files.lines(Paths.get("playedwords.txt")).collect(toSet());
         String bestValidWord = scrabble.bestValidWord(playedWords);
         assertThat(bestValidWord).isEqualTo("whizzing");
     }
