@@ -49,36 +49,34 @@ class Scrabble {
                 .mapToInt(Integer::intValue).sum();
     }
 
-    String bestValidWord(Set<String> words) {
-        return words.stream()
-                .filter(dictionary::contains)
-                .map(word -> new AbstractMap.SimpleImmutableEntry<>(score(word), word))
-                .max(comparing(AbstractMap.SimpleImmutableEntry::getKey))
-                .map(AbstractMap.SimpleImmutableEntry::getValue)
+    String highestScore(Set<String> words) {
+        return perScore(words).entrySet().stream()
+                .max(comparing(Map.Entry::getKey))
+                .map(Map.Entry::getValue)
+                .map(s -> s.iterator().next())
                 .get();
     }
 
     Map<Integer, Integer> histogram(Set<String> words) {
-        return words.stream()
-                .filter(dictionary::contains)
-                .collect(toMap(
-                        Scrabble::score,
-                        w -> 1,
-                        (count1, count2) -> count1 + count2
-                ));
+        return perScore(words).entrySet().stream()
+                .collect(toMap(Map.Entry::getKey, e -> e.getValue().size()));
     }
 
     Map<Integer, Collection<String>> bestThreeScores(Set<String> words) {
-        return words.stream()
-                .filter(dictionary::contains)
-                .collect(toMap(
-                        Scrabble::score,
-                        Collections::singleton,
-                        this::concatenate
-                )).entrySet().stream()
+        return perScore(words).entrySet().stream()
                 .sorted((e1, e2) -> e2.getKey() - e1.getKey())
                 .limit(3)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private Map<Integer, Collection<String>> perScore(Set<String> words) {
+        return words.stream()
+                    .filter(dictionary::contains)
+                    .collect(toMap(
+                            Scrabble::score,
+                            Collections::singleton,
+                            this::concatenate
+                    ));
     }
 
     private Collection<String> concatenate(Collection<String> a, Collection<String> b) {

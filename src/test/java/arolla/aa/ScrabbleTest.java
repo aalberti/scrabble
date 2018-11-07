@@ -3,10 +3,12 @@ package arolla.aa;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
@@ -41,9 +43,9 @@ public class ScrabbleTest {
     }
 
     @Test
-    public void best_played_word_is_whizzing() throws IOException {
-        String bestValidWord = scrabble.bestValidWord(playedWords);
-        assertThat(bestValidWord).isEqualTo("whizzing");
+    public void best_played_word_is_whizzing() {
+        String highestScore = scrabble.highestScore(playedWords);
+        assertThat(highestScore).isEqualTo("whizzing");
     }
 
     @Test
