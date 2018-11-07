@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toMap;
 
 class Scrabble {
     private static final Map<Character, Integer> pointsPerLetter = new HashMap<Character, Integer>() {{
@@ -52,9 +53,8 @@ class Scrabble {
                 .mapToInt(Integer::intValue).sum();
     }
 
-    String bestValidWord(Set<String> playedWords) {
-        Stream<String> wordsStream = playedWords.stream();
-        return wordsStream
+    String bestValidWord(Set<String> words) {
+        return words.stream()
                 .filter(dictionary::contains)
                 .map(word -> new AbstractMap.SimpleImmutableEntry<>(score(word), word))
                 .max(comparing(AbstractMap.SimpleImmutableEntry::getKey))
@@ -62,4 +62,13 @@ class Scrabble {
                 .get();
     }
 
+    Map<Integer, Integer> histogram(Set<String> words) {
+        return words.stream()
+                .filter(dictionary::contains)
+                .collect(toMap(
+                        Scrabble::score,
+                        w -> 1,
+                        (count1, count2) -> count1 + count2
+                ));
+    }
 }
